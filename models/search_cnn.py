@@ -6,7 +6,7 @@ from models.search_cells import SearchCell
 import genotypes as gt
 from torch.nn.parallel._functions import Broadcast
 import logging
-
+import torchvision.models as models
 
 def broadcast_list(l, device_ids):
     """ Broadcasting list """
@@ -64,6 +64,12 @@ class SearchCNN(nn.Module):
         self.linear = nn.Linear(C_p, n_classes)
 
     def forward(self, x, weights_normal, weights_reduce):
+        print(x.size())
+        model = models.resnet50(pretrained=True).cuda()
+        resnet_backbone = nn.Sequential(*list(model.children())[:-1])
+        ##### search based on ResNet50
+        print('............resnet50 backbone.............')
+        x = resnet_backbone(x)
         s0 = s1 = self.stem(x)
 
         for cell in self.cells:
