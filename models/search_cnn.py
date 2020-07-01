@@ -64,16 +64,19 @@ class SearchCNN(nn.Module):
         self.linear = nn.Linear(C_p, n_classes)
 
     def forward(self, x, weights_normal, weights_reduce):
-        print(x.size())
+#         print(x.size())
         model = models.resnet50(pretrained=True).cuda()
-        resnet_backbone = nn.Sequential(*list(model.children())[:-1])
-        ##### search based on ResNet50
+        resnet_backbone = nn.Sequential(*list(model.children())[:-4])
+        ##### search based on ResNet50, search the last block
         print('............resnet50 backbone.............')
         x = resnet_backbone(x)
+#         print(x.size())
         s0 = s1 = self.stem(x)
-
+#         print(s0.size())
+#         print(s1.size())
         for cell in self.cells:
             weights = weights_reduce if cell.reduction else weights_normal
+#             print('............cell...........', cell)
             s0, s1 = s1, cell(s0, s1, weights)
 
         out = self.gap(s1)

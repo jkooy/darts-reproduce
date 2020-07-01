@@ -43,7 +43,7 @@ def main():
     net_crit = nn.CrossEntropyLoss().to(device)
     
     #resnet backbone
-    input_channels = 2048
+    input_channels = 512
     model = SearchCNNController(input_channels, config.init_channels, n_classes, config.layers,
                                 net_crit, device_ids=config.gpus)
     model = model.to(device)
